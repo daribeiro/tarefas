@@ -1,0 +1,24 @@
+{
+  "name": "tarefas",
+  "version": "1.0.0",
+  "description": "Gerenciador de tarefas",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daiani Ribeiro",
+  "license": "ISC",
+  "homepage": "https://github.com/daribeiro/tarefas#readme",
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "ejs": "^2.5.7",
+    "morgan": "*",
+    "redis": "*"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "Gerenciador de Tarefas"
+  }
+}
