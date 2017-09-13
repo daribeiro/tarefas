@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Captura o caminho '/' na URL
 app.get('/', function (req, res) {
-    var titulo = 'Lista de Tarefas';
+    var titulo = 'Novo Contato';
 
     clienteRedis.lrange('tarefas', 0, -1, function (err, tarefas) {
 		clienteRedis.hgetall('contato', function(err, contato){
@@ -38,13 +38,21 @@ app.get('/', function (req, res) {
 });
 
 app.post('/tarefa/adicionar', function(req, res){
-	var tarefa = req.body.tarefa;
+	var tarefa = {};
 
-	clienteRedis.rpush('tarefas', tarefa, function(err, reply){
+	tarefas.nome = req.body.nome
+	tarefas.telefone = req.body.telefone
+	tarefas.email = req.body.email
+
+	clienteRedis.rpush('tarefas', 
+			['nome', tarefas.nome, 
+			'telefone', tarefas.telefone, 
+			'email', tarefas.email],
+			function(err, reply){
 		if(err){
 			console.log(err);
 		}
-		console.log('Tarefa Adicionada ...');
+		console.log('Contato Adicionado ...');
 		res.redirect('/');
 	});
 });
@@ -70,20 +78,20 @@ app.post('/contato/editar', function(req, res){
 	var contato = {};
 
 	contato.nome = req.body.nome;
-	contato.companhia = req.body.companhia;
 	contato.telefone = req.body.telefone;
+	contato.email = req.body.email;
 
 	clienteRedis.hmset('contato', 
 	         ['nome', contato.nome,
-			  'companhia', contato.companhia, 
-			  'telefone', contato.telefone], 
+			  'telefone', contato.telefone, 
+			  'email', contato.email], 
 			  function(err, reply){
 		if(err){
 			console.log(err);
 		}
 		console.log(reply);
 		res.redirect('/');
-	});
+	});e
 });
 
 app.listen(7000);

@@ -1,7 +1,7 @@
 {
   "name": "tarefas",
   "version": "1.0.0",
-  "description": "Gerenciador de tarefas",
+  "description": "Gerenciador de Contatos",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,6 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "Gerenciador de Tarefas"
+    "url": "Gerenciador de Contatos"
   }
 }
