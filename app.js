@@ -10,7 +10,7 @@ var app = express();
 var clienteRedis = redis.createClient();
 
 clienteRedis.on('connect', function () {
-    console.log('Servidor Redis Conectado ...');
+console.log('Servidor Redis Conectado ...');
 });
 
 // Configuração do Renderizador de Páginas (EJS)
@@ -24,78 +24,70 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Captura o caminho '/' na URL
 app.get('/', function (req, res) {
-    var titulo = 'Novo Contato';
+var titulo = 'Lista de Tarefas';
 
-    clienteRedis.lrange('tarefas', 0, -1, function (err, tarefas) {
-		clienteRedis.hgetall('contato', function(err, contato){
-			res.render('tarefas', {
-				titulo: titulo,
-				tarefas: tarefas,
-				contato: contato
-			});
-		});
-    });
+clienteRedis.lrange('tarefas', 0, -1, function (err, tarefas) {
+        clienteRedis.hgetall('contato', function(err, contato){
+            res.render('tarefas', {
+                titulo: titulo,
+                tarefas: tarefas,
+                contato: contato
+            });
+        });
+});
 });
 
 app.post('/tarefa/adicionar', function(req, res){
-	var tarefa = {};
+    var tarefa = req.body.tarefa;
 
-	tarefas.nome = req.body.nome
-	tarefas.telefone = req.body.telefone
-	tarefas.email = req.body.email
-
-	clienteRedis.rpush('tarefas', 
-			['nome', tarefas.nome, 
-			'telefone', tarefas.telefone, 
-			'email', tarefas.email],
-			function(err, reply){
-		if(err){
-			console.log(err);
-		}
-		console.log('Contato Adicionado ...');
-		res.redirect('/');
-	});
+    clienteRedis.rpush('tarefas', tarefa, function(err, reply){
+        if(err){
+            console.log(err);
+        }
+        console.log('Tarefa Adicionada ...');
+        res.redirect('/');
+    });
 });
 
 app.post('/tarefa/remover', function(req, res){
-	var tarefasParaRemover = req.body.tarefas;
+    var tarefasParaRemover = req.body.tarefas;
 
-	clienteRedis.lrange('tarefas', 0, -1, function(err, tarefas){
-		for(var posicao = 0; posicao < tarefas.length; posicao++){
-			if(tarefasParaRemover.indexOf(tarefas[posicao]) > -1){
-				clienteRedis.lrem('tarefas',0,tarefas[posicao], function(){
-					if(err){
-						console.log(err);
-					}
-				});
-			}
-		}
-		res.redirect('/');
-	});
+    clienteRedis.lrange('tarefas', 0, -1, function(err, tarefas){
+        for(var posicao = 0; posicao < tarefas.length; posicao++){
+            if(tarefasParaRemover.indexOf(tarefas[posicao]) > -1){
+                clienteRedis.lrem('tarefas',0,tarefas[posicao], function(){
+                    if(err){
+                        console.log(err);
+                    }
+                });
+            }
+        }
+        res.redirect('/');
+    });
 });
 
-app.post('/contato/editar', function(req, res){
-	var contato = {};
-
-	contato.nome = req.body.nome;
-	contato.telefone = req.body.telefone;
-	contato.email = req.body.email;
-
-	clienteRedis.hmset('contato', 
-	         ['nome', contato.nome,
-			  'telefone', contato.telefone, 
-			  'email', contato.email], 
-			  function(err, reply){
-		if(err){
-			console.log(err);
-		}
-		console.log(reply);
-		res.redirect('/');
-	});e
+app.post('/tarefa/editar', function(req, res){
+        var tarefasParaEditar = req.body.tarefas;
+    
+        clienteRedis.lset('tarefas', 0, -1, function(err, tarefas){
+                for(var posicao = 0; posicao < tarefas.length; posicao++){
+                    if(tarefasParaEditar.indexOf(tarefas[posicao]) > -1){
+                        clienteRedis.lset('tarefas',0,tarefas[posicao], function(err, reply){
+                            if(err){
+             console.log(err);
+           }
+                });
+            }
+        }
+           console.log('Tarefa Editada');
+         res.redirect('/');
+    });
 });
+
+
 
 app.listen(7000);
 console.log('Servidor Inicializado na Porta 7000 ...',
-    'URL: http://localhost:7000/');
+'URL: http://localhost:7000/');
 
 module.exports = app;
